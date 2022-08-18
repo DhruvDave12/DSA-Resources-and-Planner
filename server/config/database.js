@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
 const URL = process.env.MONGO_CLOUD_URL || 'mongodb://localhost:27017/codingCommData';
+
+// Routine that configures the mongo database
 module.exports.configDB = () => {
     // Establishing MongoConnection
     mongoose.connect(URL);
