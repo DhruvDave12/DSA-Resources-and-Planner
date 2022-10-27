@@ -1,0 +1,42 @@
+.sidepanel__main{
+    background-color: white;
+}
+.custom__style{
+    height: 100%;
+    overflow-x: clip;
+    overflow-y: auto;
+}
+
+.side__panel__title{
+    font-size: 2.2rem;
+    color: black;
+    text-align: center;
+    font-weight: 600;
+}
+.side__panel__title__wrapper{
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom__content{
+    padding: 24;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.custom__content{
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.custom__content::-webkit-scrollbar { 
+    display: none; 
+}
+.custom__style {
+    -ms-overflow-style: none;
+    scrollbar-width: none; 
+}
+.custom__style::-webkit-scrollbar { 
+    display: none; 
+}
