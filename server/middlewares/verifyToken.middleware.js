@@ -1,4 +1,5 @@
 const JWT_SECRET = process.env.JWT_SECRET;
+const jwt = require('jsonwebtoken');
 
 module.exports.verifyToken = (req, res, next) => {
     const token = req.cookies.token;

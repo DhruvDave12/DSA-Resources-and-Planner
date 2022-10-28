@@ -17,7 +17,7 @@ const Auth = () => {
             toast("Please login to continue 😁");
         } else {
             console.log("ERROR: ", res)
-            toast("Error occured while signing you in ☹");
+            toast.error("Error occured while signing you in ☹");
         }
     };
 
@@ -31,7 +31,7 @@ const Auth = () => {
         navigate('/dashboard');
     } else {
         console.log("ERROR: ", res)
-        toast("Error occured while loggin you in ☹");
+        toast.error("Error occured while loggin you in ☹");
     }
 };
 

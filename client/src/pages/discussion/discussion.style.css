@@ -1,0 +1,41 @@
+.discussion__header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.discussion__title{
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.discussion__grid__wrapper{
+    height: 25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+}
+.discussion__grid__wrapper::-webkit-scrollbar {
+    width: 0.5rem;
+}
+.discussion__grid{
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1rem;
+    margin: 1rem 0;
+}
+
+.custom__ameneties{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+}
+.inner__wrapper{
+    width: 60%;
+}

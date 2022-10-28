@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import axiosInstance from '../services/axios_instance';
+import {toast} from 'react-toastify';
 
 export const AuthContext = React.createContext ();
 
@@ -32,10 +33,11 @@ export const AuthProvider = ({children}) => {
           message: res.message,
         };
       }
-
-      const {user} = res.data;
+      const {user, token} = res.data;
       setUser (user);
-      localStorage.setItem('user', JSON.stringify(user._id));
+      localStorage.setItem ('user', JSON.stringify (user._id));
+      localStorage.setItem ('token', JSON.stringify (token));
+
       setIsAuthenticated (true);
       return res.data;
     } catch (err) {
@@ -46,6 +48,29 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  useEffect (() => {
+    const fetchUser = async () => {
+      const res = await axiosInstance.get ('/user/details');
+      if (res.status === 200) {
+        setUser (res.data.user);
+        setIsAuthenticated (true);
+      } else {
+        toast ('Please login to further proceed');
+        setIsAuthenticated (false);
+        setUser (null);
+      }
+    };
+
+    fetchUser ();
+  }, []);
+
+  const handleLogout = () => {
+    setUser (null);
+    localStorage.removeItem ('user');
+    localStorage.removeItem ('token');
+    setIsAuthenticated (false);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -53,6 +78,7 @@ export const AuthProvider = ({children}) => {
         isAuthenticated,
         handleRegister,
         handleLogin,
+        handleLogout,
       }}
     >
       {children}

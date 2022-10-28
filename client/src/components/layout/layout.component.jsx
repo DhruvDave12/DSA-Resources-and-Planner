@@ -1,68 +1,80 @@
-import React from "react";
+import React, {useContext} from "react";
 import {
   LaptopOutlined,
   NotificationOutlined,
   UserOutlined,
+  LogoutOutlined
 } from "@ant-design/icons";
+
 import { Layout, Menu } from "antd";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/auth.context";
 const { Header, Content, Sider } = Layout;
-const items1 = ["1", "2", "3"].map((key) => ({
-  key,
-  label: `nav ${key}`,
-}));
 
-const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-  (icon, index) => {
+const CustomLayout = ({ children }) => {
+  const {handleLogout, isAuthenticated} = useContext(AuthContext);
 
-    const sideMenuItems = [
-        'Dashboard',
-        'Discussion Forum',
-        'Practice',
-    ]
+  const navigate = useNavigate();
 
-    return {
-      key: index,
-      icon: React.createElement(icon),
-      label: sideMenuItems[index],
+  const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined, LogoutOutlined].map(
+    (icon, index) => {
+      const sideMenuItems = [
+        isAuthenticated ? 'Dashboard' : 'Signup/Login',
+        "Discussion",
+        "Practice",
+      ];
 
-      children: new Array(4).fill(null).map((_, j) => {
-        const subKey = index * 4 + j + 1;
-        return {
-          key: subKey,
-          label: `option${subKey}`,
-        };
-      }),
-    };
+      if(isAuthenticated){
+        sideMenuItems.push('Logout');
+      }
+
+      return {
+        key: index,
+        icon: React.createElement(icon),
+        label: sideMenuItems[index],
+      };
+    }
+  );
+  if(!isAuthenticated){
+    items2.pop();
   }
-);
-
-const CustomLayout = ({children}) => {
+  
+  const navMap = {
+    '0' : isAuthenticated ? '/dashboard' : '/auth',
+    '1' : '/discussion',
+    '2' : '/practice',
+    '3' : '/logout',
+  }
+  
   return (
-    <Layout style={{ height: '100vh', overflowY: 'clip' }}>
-        <Header className="header">
-            <p style={{color: 'white', fontSize: 24}}>
-                DSA RESOURCE PLANNER
-            </p>
-        </Header>
+    <Layout style={{ height: "100vh", overflowY: "clip" }}>
+      <Header className="header">
+        <p style={{ color: "white", fontSize: 24 }}>DSA RESOURCE PLANNER</p>
+      </Header>
       <Layout>
         <Sider width={200} className="site-layout-background">
           <Menu
             mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
             style={{ height: "100%", borderRight: 0 }}
             items={items2}
+            onSelect={(val) => {
+              if(val.key !== '3'){
+                navigate(navMap[val.key])
+              } else {
+                handleLogout();
+                navigate('/auth');
+              }
+            }}
           />
         </Sider>
         <Layout style={{ padding: "24px" }}>
-    
           <Content
             className="site-layout-background"
             style={{
               padding: 24,
               margin: 0,
               minHeight: 280,
-              backgroundColor: "white", 
+              backgroundColor: "white",
             }}
           >
             {children}
