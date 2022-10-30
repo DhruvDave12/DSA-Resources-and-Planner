@@ -10,6 +10,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth.routes');
 const discussionRoutes = require('./routes/discussion.routes');
 const userRoutes = require('./routes/user.routes');
+const practiceRoutes = require('./routes/practice.routes');
 
 // Configuring MongoDB routine
 configDB();
@@ -30,6 +31,7 @@ app.use(cors(corsOptions));
 app.use('/', authRoutes);
 app.use('/discussion', discussionRoutes);
 app.use('/user', userRoutes);
+app.use('/practice', practiceRoutes);
 
 // Starting the backend server
 app.listen(PORT, () => {

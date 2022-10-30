@@ -9,7 +9,10 @@ import Auth from './pages/authentication/auth.page';
 import Home from './pages/home/home.page';
 import Dashboard from './pages/dashboard/dashboard.page';
 import Discussion from './pages/discussion/discussion.page';
+import Practice from './pages/practice/practice.page';
+
 import CustomLayout from './components/layout/layout.component';
+import PrivateRoute from './components/protected-route/protected-route.component';
 
 function App() {
   return (
@@ -18,10 +21,30 @@ function App() {
       <Router>
         <CustomLayout>
           <Routes>
-            <Route exact path="/" element={<Home />} />
             <Route exact path="/auth" element={<Auth />} />
-            <Route exact path="/dashboard" element={<Dashboard />}/>
-            <Route exact path="/discussion" element={<Discussion />}/>
+            <Route exact path="/" element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            } />
+            <Route exact path="/dashboard" element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }/>
+
+            <Route exact path="/discussion" element={
+              <PrivateRoute>
+                <Discussion />
+              </PrivateRoute>
+            }/>
+
+            <Route exact path='/practice' element={
+              <PrivateRoute>
+                <Practice />
+              </PrivateRoute>
+            }/>
+
           </Routes>   
         </CustomLayout>
       </Router>

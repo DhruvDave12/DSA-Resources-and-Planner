@@ -6,10 +6,12 @@ import "./auth.styles.css";
 import { AuthContext } from "../../context/auth.context";
 import { useNavigate } from "react-router-dom";
 import {toast} from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 const Auth = () => {
     const {handleRegister, handleLogin} = React.useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const onFinishSignup = async (values) => {
         const res = await handleRegister(values);
@@ -28,7 +30,8 @@ const Auth = () => {
   const onFinishLogin = async (values) => {
     const res = await handleLogin(values);
     if(res.success){
-        navigate('/dashboard');
+        let from = location.state?.from?.pathname || "/dashboard";
+        navigate(from);
     } else {
         console.log("ERROR: ", res)
         toast.error("Error occured while loggin you in ☹");

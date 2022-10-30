@@ -7,6 +7,11 @@ import CustomButton from "../../components/custom-button/custom-button.component
 import CustomModal from "../../components/custom-modal/custom-modal.component";
 import CustomQuestionModal from "../../components/custom-question-modal/custom-question-modal.component";
 import { toast } from "react-toastify";
+import { Dropdown, Menu, Space } from "antd";
+import {
+  DownOutlined
+} from "@ant-design/icons";
+import { options } from "../../components/custom-modal/utils/options.utilities";
 
 import {
   fetchAllQuestions,
@@ -24,16 +29,19 @@ const Discussion = () => {
   const [answer, setAnswer] = useState();
   const [openQ, setOpenQ] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [selected, setSelected] = useState("All");
+  const [filteredQuestions, setFilteredQuestions] = useState([]);
+  const [pageLoading, setPageLoading] = useState(false);
 
   useEffect(() => {
-    fetchAllQuestions({ setLoading, setAllQuestions });
-  }, []);
+    fetchAllQuestions({ setLoading, setAllQuestions, setFilteredQuestions });
+  }, [pageLoading]);
 
   const handleSearch = (value) => {
     if (!value) {
-      fetchAllQuestions({ setLoading, setAllQuestions });
+      fetchAllQuestions({ setLoading, setAllQuestions, setFilteredQuestions });
     } else {
-      filterQuestions({ value, allQuestions, setAllQuestions });
+      filterQuestions({ value, allQuestions, setAllQuestions, setFilteredQuestions });
     }
   };
 
@@ -47,6 +55,7 @@ const Discussion = () => {
   };
 
   const handleSubmitAnswer = async () => {
+    setPageLoading(true);
     setConfirmLoading(true);
     const data = {
       answer: answer,
@@ -63,15 +72,19 @@ const Discussion = () => {
         toast.success("Answer submitted successfully 🤩");
         setConfirmLoadingQues(false);
         setOpenQ(false);
+        setPageLoading(false);
+        setAnswer("");
       }
     } catch (err) {
       toast.error("Error submitting answer 😐");
       setConfirmLoading(false);
       setOpenQ(false);
+      setPageLoading(false);
     }
   };
 
   const handleAsynQuestion = async () => {
+    setPageLoading(true);
     setConfirmLoadingQues(true);
     const res = await axiosInstance.post("/discussion/create-question", {
       question,
@@ -80,14 +93,18 @@ const Discussion = () => {
     if (res.data.success) {
       setOpenQues(false);
       setConfirmLoadingQues(false);
-      window.location.reload(false);
+      setPageLoading(false);
+      setQuestion("");
+      setTags([]);
     } else {
       toast.error("Something went wrong 😢");
       setConfirmLoadingQues(false);
+      setPageLoading(false);
     }
   };
 
   const handleUpvote = async (answerID) => {
+    setPageLoading(true);
     try {
       const res = await axiosInstance.post(
         `/discussion/upvote-answer/${answerID}`
@@ -96,13 +113,16 @@ const Discussion = () => {
         toast.success("Upvoted successfully 🤩");
         setOpenQ(false);
       }
+      setPageLoading(false);
     } catch (err) {
       toast.error("Error upvoting 😐");
       setOpenQ(false);
+      setPageLoading(false);
     }
   };
 
   const handleDownvote = async (answerID) => {
+    setPageLoading(true);
     try {
       const res = await axiosInstance.post(
         `/discussion/downvote-answer/${answerID}`
@@ -110,13 +130,29 @@ const Discussion = () => {
       if (res.status === 200) {
         toast.success("Upvoted successfully 🤩");
         setOpenQ(false);
+        setPageLoading(false);
       }
     } catch (err) {
       toast.error("Error upvoting 😐");
       setOpenQ(false);
+      setPageLoading(false);
     }
   };
 
+  useEffect(() => {
+    // setPageLoading(true);
+    console.log("SELECTED: ", selected);
+    if (selected === "All") {
+      fetchAllQuestions({ setLoading, setAllQuestions,setFilteredQuestions });
+    } else {
+      filterQuestions({ value: selected, allQuestions, setAllQuestions, setFilteredQuestions });
+    }
+    // setPageLoading(true);
+  }, [selected])
+
+  const newOptions = [{label: "All", value: "All"}, ...options];
+
+  const toShow = filteredQuestions.length > 0 ? filteredQuestions : allQuestions;
   return (
     <div>
       <div className="discussion__header">
@@ -126,36 +162,62 @@ const Discussion = () => {
 
       <div className="custom__ameneties">
         <div className="inner__wrapper">
-          <CustomSearchBar
-            placeholder="Search for a topic"
-            handleSearch={handleSearch}
-          />
+          <div style={{width: '80%'}}>
+            <CustomSearchBar
+              placeholder="Search for a topic"
+              handleSearch={handleSearch}
+            />
+          </div>
+
+      
+          <Dropdown
+            overlay={<Menu className="menuuuuu" selectable items={newOptions} onChange={e => console.log(e)} onSelect={e => setSelected(newOptions[parseInt(e.key.split('-')[1])].value)}/>}
+            trigger={["click"]}
+          >
+            <a onClick={(e) => {e.preventDefault()}}>
+              <Space>
+                Filter using tags
+                <DownOutlined />
+              </Space>
+            </a>
+          </Dropdown>
         </div>
       </div>
 
-      <div className="discussion__grid__wrapper">
-        {allQuestions ? (
-          <div className="discussion__grid">
-            {allQuestions.map((question) => {
-              return (
-                <CustomDiscussionCard
-                  title={question.question}
-                  description={`By ${question.author.username}`}
-                  loading={loading}
-                  tags={question.tags}
-                  onClick={() => showQuestion(question)}
-                />
-              );
-            })}
-          </div>
-        ) : (
-          <h1 style={{ fontSize: 22, textAlign: "center" }}>No Discussion ☹</h1>
-        )}
-      </div>
+      {!pageLoading ? (
+        <div className="discussion__grid__wrapper">
+          {filterQuestions ? (
+            <div className="discussion__grid">
+              {filteredQuestions.map((question) => {
+                return (
+                  <CustomDiscussionCard
+                    title={question.question}
+                    description={`By ${question.author.username}`}
+                    loading={loading}
+                    tags={question.tags}
+                    onClick={() => showQuestion(question)}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <h1 style={{ fontSize: 22, textAlign: "center" }}>
+              No Discussion ☹
+            </h1>
+          )}
+        </div>
+      ) : (
+        <p>LOADING PLEASE WAIT....</p>
+      )}
 
       <CustomModal
         confirmLoading={confirmLoadingQues}
-        handleCancel={() => {setTags([]); setQuestion(""); setOpenQues(false); setConfirmLoadingQues(false)}}
+        handleCancel={() => {
+          setTags([]);
+          setQuestion("");
+          setOpenQues(false);
+          setConfirmLoadingQues(false);
+        }}
         handleOk={handleAsynQuestion}
         open={openQues}
         setQuestion={setQuestion}
@@ -164,7 +226,11 @@ const Discussion = () => {
 
       <CustomQuestionModal
         confirmLoading={confirmLoading}
-        handleCancel={() => {setAnswer(""); setOpenQ(false); setConfirmLoading(false);}}
+        handleCancel={() => {
+          setAnswer("");
+          setOpenQ(false);
+          setConfirmLoading(false);
+        }}
         handleOk={handleSubmitAnswer}
         open={openQ}
         question={currQuestion}

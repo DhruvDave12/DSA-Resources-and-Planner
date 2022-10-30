@@ -55,7 +55,7 @@ const CustomLayout = ({ children }) => {
         <Sider width={200} className="site-layout-background">
           <Menu
             mode="inline"
-            style={{ height: "100%", borderRight: 0 }}
+            style={{ height: "100%", borderRight: 0, width: 200}}
             items={items2}
             onSelect={(val) => {
               if(val.key !== '3'){

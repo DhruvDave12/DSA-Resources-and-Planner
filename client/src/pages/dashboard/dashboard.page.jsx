@@ -3,8 +3,6 @@ import { AuthContext } from "../../context/auth.context";
 
 const Dashboard = () => {
     const {user} = React.useContext(AuthContext);
-    
-    console.log("USER: ", user);
     return (
         <div className="dashboard__page">
             {
@@ -17,6 +15,8 @@ const Dashboard = () => {
                 <h2 style={{fontSize: 20}}>Score: {user.score}</h2>
                 : <h2>COULDNT FETCH SCORE</h2>
             }
+
+            <p style={{fontWeight: 300}}>Reach 500 score to become pro in DSA</p>
         </div>
     )
 }

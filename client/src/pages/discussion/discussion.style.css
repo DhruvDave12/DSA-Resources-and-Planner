@@ -38,4 +38,13 @@
 }
 .inner__wrapper{
     width: 60%;
+    display: flex;
+    justify-content: space-between;
+}
+.menuuuuu{
+    height: 20rem;
+    overflow-y: auto;
+}
+.menuuuuu::-webkit-scrollbar {
+    width: 0.5rem;
 }

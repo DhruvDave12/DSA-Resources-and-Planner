@@ -60,15 +60,22 @@ export const AuthProvider = ({children}) => {
         setUser (null);
       }
     };
-
+    
     fetchUser ();
   }, []);
 
-  const handleLogout = () => {
-    setUser (null);
-    localStorage.removeItem ('user');
-    localStorage.removeItem ('token');
-    setIsAuthenticated (false);
+  const handleLogout = async () => {
+    try {
+      const res = await axiosInstance.get('/logout');
+      if(res.status === 200) {
+        setUser (null);
+        localStorage.removeItem ('user');
+        localStorage.removeItem ('token');
+        setIsAuthenticated (false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
