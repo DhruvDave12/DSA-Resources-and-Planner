@@ -5,4 +5,5 @@ We are going to implement a whole DSA Resource and Planner system which will mak
 We have used Star UML and Archimate tools to plan the project based on requirements.
 
 In the uml file, all the uml models are present within the folder named 'DSA Prep'.
+
 In the archimate file, all the views are present within the folder named 'Views'
